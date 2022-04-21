@@ -16,13 +16,23 @@ public final class Client implements java.io.Serializable {
         connect();
     }
 
-    public static void checkConnection() throws RemoteException, NotBoundException {
+    public static void waitForConnection(final int max_retry) {
+        int retry = 0;
         try {
-            Naming.lookup(IRemote.SERVICE_RMIURL);
-        } catch (MalformedURLException e) {
+            while(retry < max_retry) {
+                retry++;
+                Thread.sleep(500);
+                try {
+                    Naming.lookup(IRemote.SERVICE_RMIURL);
+                    return;
+                } catch (Exception e) { /* do nothing */ }
+            }
+        } catch (InterruptedException e) {
             e.printStackTrace();
             System.exit(1);
         }
+
+        throw new RuntimeException("Connection to server failed");
     }
 
     private void connect() throws RemoteException {
@@ -39,7 +49,7 @@ public final class Client implements java.io.Serializable {
 
     public void exec() throws RemoteException {
         server.service1();
-        System.out.println(this + " Execution of service  successful (" + IRemote.SERVICE_NAME + ")");
+        System.out.println(this + " Execution of service successful (" + IRemote.SERVICE_NAME + ")");
     }
 
     public int getClientId() {
