@@ -4,10 +4,8 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class App {
-    private static final int NUM_THREADS = 10; /* num clients */
 
     public static void main(String[] args) {
 
@@ -24,11 +22,11 @@ public class App {
         c2.exec();
         */
 
-
-
-
     //===  N CLIENTS PARALLEL EXECUTION ===//
-        ExecutorService executorService = Executors.newFixedThreadPool(4); /* Executors.newCachedThreadPool(); */
+        final int NUM_THREADS = 2;
+        final int NUM_CLIENTS = 10;
+
+        ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREADS); /* Executors.newCachedThreadPool(); */
 
         try {
             Client.checkConnection();
@@ -37,7 +35,7 @@ public class App {
             System.exit(1);
         }
 
-        for (int i=0; i<NUM_THREADS; ++i) {
+        for (int i=0; i<NUM_CLIENTS; ++i) {
             executorService.submit(() -> {
 
                 // spawn new client
